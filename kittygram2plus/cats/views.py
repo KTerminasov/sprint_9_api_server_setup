@@ -1,9 +1,11 @@
 from rest_framework import viewsets, permissions
+from rest_framework.throttling import AnonRateThrottle, ScopedRateThrottle
 
 from .models import Achievement, Cat, User
 
 from .permissions import OwnerOrReadOnly, ReadOnly
 from .serializers import AchievementSerializer, CatSerializer, UserSerializer
+from .throttling import WorkingHoursRateThrottle
 
 
 class CatViewSet(viewsets.ModelViewSet):
@@ -12,6 +14,16 @@ class CatViewSet(viewsets.ModelViewSet):
     # Устанавливаем разрешение, теперь смотреть список
     # котиков можно без аутенфикации.
     permission_classes = (OwnerOrReadOnly,)
+
+    # Устанавливаем лимит запросов для анонимов из settings
+    # throttle_classes = (AnonRateThrottle,)
+
+    # Если кастомный тротлинг-класс вернёт True - запросы будут обработаны
+    # Если он вернёт False - все запросы будут отклонены
+    throttle_classes = (WorkingHoursRateThrottle, ScopedRateThrottle)
+
+    # Для любых пользователей установим кастомный лимит 1 запрос в минуту
+    throttle_scope = 'low_request'
 
     def get_permissions(self):
         """Определяет какой пермишен использовать."""

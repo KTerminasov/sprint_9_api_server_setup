@@ -127,6 +127,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
+    # Управление доступом на уровне всего проекта.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -134,6 +135,20 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+
+    # Управление лимитами на уровне всего проекта.
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.UserRateThrottle',  # Аутенфицированный пользователь
+        # 'rest_framework.throttling.AnonRateThrottle',  # Анонимный пользователь
+        'rest_framework.throttling.ScopedRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'user': '10000/day',  # Лимит для UserRateThrottle
+        'anon': '1000/day',  # Лимит для AnonRateThrottle
+        # Имена (ключи) для scope придумывает разработчик, 
+        # в меру собственной фантазии
+        'low_request': '1/minute',
+    }
 }
 
 SIMPLE_JWT = {
