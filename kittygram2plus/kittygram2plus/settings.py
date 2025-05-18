@@ -148,7 +148,11 @@ REST_FRAMEWORK = {
         # Имена (ключи) для scope придумывает разработчик, 
         # в меру собственной фантазии
         'low_request': '1/minute',
-    }
+    },
+
+    # Управление пагинацией.
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5,
 }
 
 SIMPLE_JWT = {
